@@ -1,4 +1,15 @@
 #include "Player.h"
+#include "Scene.h"
+
+Player::~Player()
+{
+	//memory manage our bullets, delete all bullets on player death
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		delete bullets[i];
+	}
+	bullets.clear();
+}
 
 void Player::start()
 { 
@@ -12,9 +23,13 @@ void Player::start()
 		height = 0;
 		speed = 2;
 		boost = 5;
+		reloadTime = 8; //reload time of 8 frames, or 0.5 seconds
+		currentReloadTime = 0;
 
 		// query the texture to set our width and height
 		SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+
+		sound = SoundManager::loadSound("sound/334227__jradcoolness__laser.ogg");
 }
 
 void Player::update()
@@ -48,6 +63,40 @@ void Player::update()
 	{
 		x += (speed * 1);
 	}
+
+	// Decrement the player's reload timer
+	if (currentReloadTime > 0)
+	{
+		currentReloadTime--;
+	}
+
+	if (app.keyboard[SDL_SCANCODE_F] && currentReloadTime == 0 )
+	{
+		SoundManager::playSound(sound);
+		Bullet* bullet = new Bullet(x + width, y -4 + height/2, 1, 0, 10);
+		bullets.push_back(bullet);
+		getScene()->addGameObject(bullet);
+		bullet->start();
+
+		// after firing, reset the reload timer
+		currentReloadTime = reloadTime;
+	}
+
+	//memory manage our bullets, when they go offscreen, delete them
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		if (bullets[i]->getPositionX() > SCREEN_WIDTH)
+		{
+			// Cache the variables so we can delete it later
+			// we can't delete it after erasing from the vector (leaked pointer)
+			Bullet* bulletToErase = bullets[i];
+			bullets.erase(bullets.begin() + i);
+			delete bulletToErase;
+
+			break;
+		}
+	}
+
 }
 
 void Player::draw()
