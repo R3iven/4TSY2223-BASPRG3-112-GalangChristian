@@ -17,7 +17,11 @@ public:
 	void update();
 	void draw();
 	void setPlayerTarget(Player* player);
-	void setPosition(int xPos, int yPos);
+	void setPosition(int xPos, int yPos); 
+
+	//get position when offscreen
+	int getPositionX();
+	int getPositionY();
 
 private:
 	SDL_Texture* texture;
@@ -40,7 +44,6 @@ private:
 
 	float directionChangeTime;
 	float currentDirectionChangeTime;
-
 
 	std::vector <BulletEnemy*> bullets;
 };

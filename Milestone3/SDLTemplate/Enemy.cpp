@@ -8,6 +8,7 @@ Enemy::Enemy()
 
 Enemy::~Enemy()
 {
+
 }
 
 void Enemy::start()
@@ -105,4 +106,14 @@ void Enemy::setPosition(int xPos, int yPos)
 {
 	this->x = xPos;
 	this->y = yPos;
+}
+
+int Enemy::getPositionX()
+{
+	return x;
+}
+
+int Enemy::getPositionY()
+{
+	return y;
 }
